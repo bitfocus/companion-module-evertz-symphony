@@ -1,3 +1,3 @@
-## Your module
+## Evertz MVP
 
-Write some help for your users here!
+Control the Evertz MVP Multiviewer using the Symphony Protocol.

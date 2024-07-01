@@ -1,4 +1,4 @@
-module.exports = function (self) {
+export default function (self) {
 	self.setActionDefinitions({
 		sample_action: {
 			name: 'My First Action',
