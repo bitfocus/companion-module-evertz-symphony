@@ -8,11 +8,15 @@ import * as tcp from './tcp.js'
 import * as response from './response.js'
 import sequence from './sequence.js'
 
-class Evertz_MVP extends InstanceBase {
+class Evertz_Symphony extends InstanceBase {
 	constructor(internal) {
 		super(internal)
 		Object.assign(this, { ...config, ...tcp, ...response })
-		this.mvp = {}
+		this.mvp = {
+			scripts: [],
+			msgStore: [],
+			sequence: 1,
+		}
 	}
 
 	async init(config) {
@@ -23,6 +27,16 @@ class Evertz_MVP extends InstanceBase {
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
 	}
+	
+	async configUpdated(config) {
+	this.config = config
+	this.updateStatus(InstanceStatus.Connecting)
+	this.initTCP()
+	this.updateActions() // export actions
+	this.updateFeedbacks() // export feedbacks
+	this.updateVariableDefinitions() // export variable definitions
+	}
+	
 	// When module gets deleted
 	async destroy() {
 		this.log('debug', 'destroy')
@@ -33,6 +47,10 @@ class Evertz_MVP extends InstanceBase {
 		if (this.cmdTimer) {
 			clearTimeout(this.cmdTimer)
 			delete this.cmdTimer
+		}
+		if (this.clearToTxTimer !== undefined) {
+			clearTimeout(this.clearToTxTimer)
+			delete this.clearToTxTimer
 		}
 		delete this.mvp
 	}
@@ -53,4 +71,4 @@ class Evertz_MVP extends InstanceBase {
 	}
 }
 
-runEntrypoint(Evertz_MVP, UpgradeScripts)
+runEntrypoint(Evertz_Symphony, UpgradeScripts)

@@ -1,8 +1,8 @@
 {
-	"id": "evertz-mvp",
-	"name": "evertz-mvp",
-	"shortname": "MVP",
-	"description": "Companion module for Evertz MVP Multiviewer",
+	"id": "evertz-symphony",
+	"name": "evertz-symphony",
+	"shortname": "Symphony",
+	"description": "Companion module for Evertz Multiviewer supporting Symphony Protocol",
 	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/phillipivan/companion-module-evertz-mvp.git",
@@ -21,6 +21,6 @@
 	},
 	"legacyIds": [],
 	"manufacturer": "Evertz",
-	"products": ["MVP"],
+	"products": ["MVP", "VIP", "NGI", "Exhibit"],
 	"keywords": ["Multiviewer"]
 }

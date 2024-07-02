@@ -1,19 +1,18 @@
 import { Regex } from '@companion-module/base'
-import { default_port } from './consts.js'
+import { default_port, choices } from './consts.js'
 
-export async function configUpdated(config) {
-		//let oldConfig = this.config
-		this.config = config
-		this.initTCP()
-		this.initVariables()
-		this.updateActions()
-		this.updateFeedbacks()
-		this.updateVariableDefinitions()
-		this.updatePresetsDefinitions()
-	}
 	// Return config fields for web config
 export function	getConfigFields() {
 		return [
+			{
+				type: 'dropdown',
+				id: 'model',
+				label: 'Model',
+				witdth: 6,
+				default: choices.device[0].id,
+				allowCustom: false,
+				choices: choices.device,
+			},
 			{
 				type: 'textinput',
 				id: 'host',
@@ -41,6 +40,9 @@ export function	getConfigFields() {
 				range: true,
 				step: 1,
 				tooltip: `Number of addressable displays in the system`,
+				isVisible: (options) => {
+					return options.model === choices.device[0].id || options.model === choices.device[2].id
+				},
 			},
 		]
 	}

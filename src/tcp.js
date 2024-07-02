@@ -1,15 +1,24 @@
 import { InstanceStatus, TCPHelper } from '@companion-module/base'
-import { command, SOM, EOM, keep_alive, msg_delay, proto_version } from './consts.js'
+import { choices, command, SOM, EOM, keep_alive_timeout, msg_delay, proto_version, clearToTx_timeout } from './consts.js'
 
 export function queryOnConnect() {
 	//function to make initial queries and start message command queue
 	this.cmdTimer = setTimeout(() => {
 		this.processCmdQueue()
 	}, msg_delay)
-	this.addCmdtoQueue({type: command.list_scripts, label: '', props: []})
-	this.addCmdtoQueue({ type: command.display_listen, label: '', props: [] })
-	for (let i = 1; i <= this.config.display; i++) {
-		this.addCmdtoQueue({ type: command.list_windows, label: '', props: [{name: 'display', value: i}] })
+	if (this.config.model === choices.device[0].id) {
+		this.addCmdtoQueue({ proto: proto_version, type: command.list_scripts, label: '', props: [] })
+		//this.addCmdtoQueue({ type: command.display_listen, label: '', props: [] })
+		for (let i = 1; i <= this.config.display; i++) {
+			this.addCmdtoQueue({
+				proto: proto_version,
+				type: command.list_windows,
+				label: '',
+				props: [{ name: 'display', value: i }],
+			})
+		}
+	} else {
+		this.keepAlive()
 	}
 	this.subscribeActions()
 	this.subscribeFeedbacks()
@@ -28,8 +37,15 @@ export function addCmdtoQueue(cmd) {
 		return false
 }
 
+export function clearToTxTimeout() {
+	if (this.clearToTxTimer !== undefined) {
+		clearTimeout(this.clearToTxTimer)
+	}
+	this.clearToTx = true
+}
+
 export function keepAlive() {
-	this.addCmdtoQueue({ type: command.list_scripts, label: null, props: [] })
+	this.addCmdtoQueue({ proto: proto_version, type: command.list_scripts, label: '', props: [] })
 }
 
 export function processCmdQueue() {
@@ -49,6 +65,7 @@ export function processCmdQueue() {
 
 export function sendCommand(cmd) {
 	if (Array.isArray(cmd)) {
+		//console.log ('sendCommand passed an array')
 		cmd = cmd[0]
 	}
 		if (cmd !== undefined && cmd instanceof Object) {
@@ -57,15 +74,15 @@ export function sendCommand(cmd) {
 					clearTimeout (this.keepAliveTimer)
 				}
 				let sequence = this.returnSequence()
-				let msg = SOM + proto_version + sequence + cmd.type + '(' + cmd.label + ')'
+				let msg = SOM + cmd.proto + sequence + cmd.type + '(' + cmd.label + ')'
 				let properties= '{'
-				let props = cmd.props
-				for (let i = 0; i < props.lenght; i++) {
-					properties += ` ${props[i].name} = ${ props[i].value}`
+				//let props = cmd.props
+				for (let i = 0; i < cmd.props.length; i++) {
+					properties += ` ${cmd.props[i].name} = ${cmd.props[i].value}`
 				}
 				msg += properties + ' }' + EOM
 				//this.log('debug', `Sending Command: ${msg}`)
-				console.log(msg)
+				console.log(`Sending Command: ${msg}`)
 				this.clearToTx = false
 				this.socket.send(SOM + Buffer.from(msg) + EOM)
 				if (this.mvp.msgStore === undefined) {
@@ -74,10 +91,13 @@ export function sendCommand(cmd) {
 				this.mvp.msgStore[sequence] = cmd
 				this.keepAliveTimer = setTimeout(() => {
 					this.keepAlive()
-				}, keep_alive)
+				}, keep_alive_timeout)
+				this.clearToTxTimer = setTimeout(() => {
+					this.clearToTxTimeout()
+				}, clearToTx_timeout)
 				return sequence
 			} else {
-				this.log('warn', `Socket not connected, tried to send: ${JSON.toString(cmd)}`)
+				this.log('warn', `Socket not connected, tried to send: ${JSON.stringify(cmd)}`)
 			}
 		} else {
 			this.log('warn', 'Command undefined')
@@ -104,7 +124,6 @@ export function initTCP () {
                 this.log('error', `Network error: ${err.message}`)
                 this.updateStatus(InstanceStatus.ConnectionFailure, message)
 				delete this.mvp.msgStore
-				delete this.mvp.sequence
 				delete this.cmdQueue
 			})
 			this.socket.on('connect', () => {
@@ -114,10 +133,11 @@ export function initTCP () {
 				this.clearToTx = true
 				this.receiveBuffer = Buffer.from('')
 				this.queryOnConnect()
+				this.clearToTxTimeout()
 			})
 			this.socket.on('data', (chunk) => {
-				console.log (`Chunk Recieved: ${chunk}`)
-				this.clearToTx = true
+				//console.log (`Chunk Recieved: ${chunk}`)
+				this.clearToTxTimeout()
 				let i = 0,
 					line = '',
 					offset = 0
