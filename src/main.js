@@ -1,8 +1,8 @@
-import { InstanceBase, Regex, runEntrypoint, InstanceStatus } from '@companion-module/base'
-import UpgradeScripts from './upgrades'
-import UpdateActions from './actions'
-import UpdateFeedbacks from './feedbacks'
-import UpdateVariableDefinitions from './variables'
+import { InstanceBase, runEntrypoint, InstanceStatus } from '@companion-module/base'
+import UpgradeScripts from './upgrades.js'
+import UpdateActions from './actions.js'
+import UpdateFeedbacks from './feedbacks.js'
+import UpdateVariableDefinitions from './variables.js'
 import * as config from './config.js'
 import * as tcp from './tcp.js'
 import * as response from './response.js'
@@ -27,16 +27,16 @@ class Evertz_Symphony extends InstanceBase {
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
 	}
-	
+
 	async configUpdated(config) {
-	this.config = config
-	this.updateStatus(InstanceStatus.Connecting)
-	this.initTCP()
-	this.updateActions() // export actions
-	this.updateFeedbacks() // export feedbacks
-	this.updateVariableDefinitions() // export variable definitions
+		this.config = config
+		this.updateStatus(InstanceStatus.Connecting)
+		this.initTCP()
+		this.updateActions() // export actions
+		this.updateFeedbacks() // export feedbacks
+		this.updateVariableDefinitions() // export variable definitions
 	}
-	
+
 	// When module gets deleted
 	async destroy() {
 		this.log('debug', 'destroy')

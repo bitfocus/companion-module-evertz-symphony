@@ -1,33 +1,26 @@
-import { command, choices, proto_version } from './consts.js'
+import { actionOptions, command, choices, proto_version } from './consts.js'
 export default function (self) {
 	let actionList = []
 	if (self.mvp.scripts.length === 0) {
-		self.mvp.scripts[0] = {id: '', label: ''}
+		self.mvp.scripts[0] = { id: '', label: '' }
 	}
 	if (self.config.model == choices.device[0].id) {
 		actionList['runScript'] = {
 			name: 'Run Script',
 			options: [
 				{
-					id: 'script',
-					type: 'dropdown',
-					label: 'Script',
+					...actionOptions.runSciptMVP.script,
 					default: self.mvp.scripts[0].id,
-					allowCustom: true,
 					choices: self.mvp.scripts,
 				},
 				{
-					id: 'display',
-					type: 'textinput',
-					label: 'Display',
-					default: '1',
-					useVariables: true,
-					tooltip: `Return an integer between 1 and ${self.config.display}`
+					...actionOptions.runSciptMVP.display,
+					tooltip: `Return an integer between 1 and ${self.config.display}`,
 				},
 			],
 			callback: async (action) => {
 				let script = await self.parseVariablesInString(action.options.script)
-				let display = parseInt( await self.parseVariablesInString(action.options.display))
+				let display = parseInt(await self.parseVariablesInString(action.options.display))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -43,33 +36,16 @@ export default function (self) {
 				})
 			},
 		}
-		
+
 		actionList['routeAudio'] = {
 			name: 'Route Audio',
 			options: [
 				{
-					id: 'display',
-					type: 'textinput',
-					label: 'Display',
-					default: '1',
-					useVariables: true,
+					...actionOptions.routeAudio.display,
 					tooltip: `Return an integer between 1 and ${self.config.display}`,
 				},
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-				{
-					id: 'pair',
-					type: 'textinput',
-					label: 'Pair',
-					default: '1',
-					useVariables: true,
-					tooltip: 'Return audio pair number, set to 0 to turn off',
-				},
+				actionOptions.routeAudio.window,
+				actionOptions.routeAudio.pair,
 			],
 			callback: async (action) => {
 				let display = parseInt(await self.parseVariablesInString(action.options.display))
@@ -96,25 +72,10 @@ export default function (self) {
 		}
 		actionList['setVGPI'] = {
 			name: 'Set VGPI',
-			options: [
-				{
-					id: 'vgpi',
-					type: 'textinput',
-					label: 'VGPI',
-					default: '1',
-					useVariables: true,
-					tooltip: `Return an integer between 1 and 320`,
-				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'State',
-					default: true,
-				},
-			],
+			options: [actionOptions.setVGPI.vgpi, actionOptions.setVGPI.state],
 			callback: async (action) => {
 				let vgpi = parseInt(await self.parseVariablesInString(action.options.vgpi))
-				if (isNaN(vgpi) || display < 1 || vgpi > 320) {
+				if (isNaN(vgpi) || vgpi < 1 || vgpi > 320) {
 					self.log('warn', `Invalid display selected ${vgpi}`)
 					return undefined
 				}
@@ -131,20 +92,10 @@ export default function (self) {
 			name: 'Unassign Window Source',
 			options: [
 				{
-					id: 'display',
-					type: 'textinput',
-					label: 'Display',
-					default: '1',
-					useVariables: true,
+					...actionOptions.unassignWindow.display,
 					tooltip: `Return an integer between 1 and ${self.config.display}`,
 				},
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
+				actionOptions.unassignWindow.window,
 			],
 			callback: async (action) => {
 				let display = parseInt(await self.parseVariablesInString(action.options.display))
@@ -163,15 +114,7 @@ export default function (self) {
 		}
 		actionList['runSnapshot'] = {
 			name: 'Run Snapshot',
-			options: [
-				{
-					id: 'snapshot',
-					type: 'textinput',
-					label: 'Snapshot',
-					default: '',
-					useVariables: true,
-				},
-			],
+			options: [actionOptions.runSnapshot.snapshot, actionOptions.runSnapshot.info],
 			callback: async (action) => {
 				let snapshot = await self.parseVariablesInString(action.options.snapshot)
 				self.addCmdtoQueue({
@@ -186,18 +129,9 @@ export default function (self) {
 	if (self.config.model == choices.device[1].id || self.config.model == choices.device[2].id) {
 		actionList['runScript'] = {
 			name: 'Run Script',
-			options: [
-				{
-					id: 'script',
-					type: 'textinput',
-					label: 'Script',
-					default: 'script1.vssl',
-					useVariables: true,
-				},
-			],
+			options: [actionOptions.runScriptVIP.script],
 			callback: async (action) => {
 				let script = await self.parseVariablesInString(action.options.script)
-				let display = parseInt(await self.parseVariablesInString(action.options.display))
 				self.addCmdtoQueue({
 					proto: proto_version,
 					type: command.run_script,
@@ -212,34 +146,12 @@ export default function (self) {
 			name: 'Change Window Source',
 			options: [
 				{
-					id: 'display',
-					type: 'textinput',
-					label: 'Display',
-					default: '1',
-					useVariables: true,
+					...actionOptions.changeWindowSource.display,
 					tooltip: `Return an integer between 1 and ${self.config.display}`,
 				},
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-				{
-					id: 'family',
-					type: 'textinput',
-					label: 'Family Name',
-					default: 'IC1',
-					useVariables: true,
-				},
-				{
-					id: 'member',
-					type: 'textinput',
-					label: 'Member Name',
-					default: 'BNC_A',
-					useVariables: true,
-				},
+				actionOptions.changeWindowSource.window,
+				actionOptions.changeWindowSource.family,
+				actionOptions.changeWindowSource.member,
 			],
 			callback: async (action) => {
 				let display = parseInt(await self.parseVariablesInString(action.options.display))
@@ -267,37 +179,19 @@ export default function (self) {
 	if (self.config.model == choices.device[3].id) {
 		actionList['show'] = {
 			name: 'Show',
-			options: [
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-			],
+			options: [actionOptions.show.window],
 			callback: async (action) => {
 				let window = await self.parseVariablesInString(action.options.window)
 				self.addCmdtoQueue({
 					type: command.show,
 					label: '',
-					props: [
-						{ name: 'win', value: `"${window}"` },
-					],
+					props: [{ name: 'win', value: `"${window}"` }],
 				})
 			},
 		}
 		actionList['hide'] = {
 			name: 'Hide',
-			options: [
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-			],
+			options: [actionOptions.show.window],
 			callback: async (action) => {
 				let window = await self.parseVariablesInString(action.options.window)
 				self.addCmdtoQueue({
@@ -311,41 +205,11 @@ export default function (self) {
 		actionList['move'] = {
 			name: 'move',
 			options: [
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-				{
-					id: 'duration',
-					type: 'textinput',
-					label: 'Duration',
-					default: '1',
-					useVariables: true,
-				},
-				{
-					id: 'units',
-					type: 'dropdown',
-					label: 'Units',
-					default: choices.duration[0].id,
-					choices: choices.duration,
-				},
-				{
-					id: 'xPos',
-					type: 'textinput',
-					label: 'X Position',
-					default: '100',
-					useVariables: true,
-				},
-				{
-					id: 'yPos',
-					type: 'textinput',
-					label: 'Y Position',
-					default: '340',
-					useVariables: true,
-				},
+				actionOptions.show.window,
+				actionOptions.move.duration,
+				actionOptions.move.units,
+				actionOptions.move.xPos,
+				actionOptions.move.yPos,
 			],
 			callback: async (action) => {
 				let window = await self.parseVariablesInString(action.options.window)
@@ -360,7 +224,7 @@ export default function (self) {
 				duration += action.option.units
 				let xPos = parseInt(await self.parseVariablesInString(action.options.xPos))
 				let yPos = parseInt(await self.parseVariablesInString(action.options.yPos))
-				if (isNaN(xPos) || isNaN (yPos)) {
+				if (isNaN(xPos) || isNaN(yPos) || xPos < 0 || yPos < 0) {
 					self.log('warn', `Invalid postion ${xPos}:${yPos}`)
 					return undefined
 				}
@@ -380,41 +244,11 @@ export default function (self) {
 		actionList['scale'] = {
 			name: 'Scale',
 			options: [
-				{
-					id: 'window',
-					type: 'textinput',
-					label: 'Window Name',
-					default: 'window',
-					useVariables: true,
-				},
-				{
-					id: 'duration',
-					type: 'textinput',
-					label: 'Duration',
-					default: 'window',
-					useVariables: true,
-				},
-				{
-					id: 'units',
-					type: 'dropdown',
-					label: 'Units',
-					default: choices.duration[0].id,
-					choices: choices.duration,
-				},
-				{
-					id: 'xSize',
-					type: 'textinput',
-					label: 'X Size',
-					default: '100',
-					useVariables: true,
-				},
-				{
-					id: 'ySize',
-					type: 'textinput',
-					label: 'Y Size',
-					default: '340',
-					useVariables: true,
-				},
+				actionOptions.show.window,
+				actionOptions.move.duration,
+				actionOptions.move.units,
+				actionOptions.scale.xSize,
+				actionOptions.scale.ySize,
 			],
 			callback: async (action) => {
 				let window = await self.parseVariablesInString(action.options.window)
