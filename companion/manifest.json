@@ -5,8 +5,8 @@
 	"description": "Companion module for Evertz Multiviewer supporting Symphony Protocol",
 	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/phillipivan/companion-module-evertz-mvp.git",
-	"bugs": "https://github.com/phillipivan/companion-module-evertz-mvp/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-evertz-symphony.git",
+	"bugs": "https://github.com/bitfocus/companion-module-evertz-symphony/issues",
 	"maintainers": [
 		{
 			"name": "Phillip Ivan Pietruschka",

@@ -1,5 +1,5 @@
 import { InstanceStatus } from '@companion-module/base'
-import { command, response, error_codes, STX, proto_version } from './consts.js'
+import { command, response, error_codes, STX, proto_version, choices } from './consts.js'
 export function processResponse(msg) {
 	//this.log('debug', `processResponse ${msg}`)
 	if (msg.includes(STX)) {
@@ -19,8 +19,14 @@ export function processResponse(msg) {
 		return undefined
 	}
 	if (resp === response.error) {
+		if (this.config.model !== choices.device[0].id && label == error_codes[1].id) {
+			//ignore invalid proto messages from units other than MVP since using proto 99 for KA
+		} else {
+			this.log('warn', `Error response recieved: ${error_codes[label].label}`)
+			this.updateStatus(error_codes[label].status, error_codes[label].label)
+		}
 		this.log('warn', `Error response recieved: ${error_codes[label].label}`)
-		this.updateStatus(InstanceStatus.UnknownWarning, error_codes[label].label)
+		this.updateStatus(error_codes[label].status, error_codes[label].label)
 	}
 	let type = undefined
 	try {
@@ -28,12 +34,14 @@ export function processResponse(msg) {
 		delete this.mvp.msgStore[sequence]
 	} catch {
 		this.log('info', `Sequence ${sequence} not found in msgStore`)
+		this.updateStatus(InstanceStatus.UnknownWarning, `Sequence ${sequence} not found in msgStore`)
 		return undefined
 	}
 	this.log(
 		'debug',
 		`Message Recieved: Protocol Version ${proto} Sequence Number ${sequence} Response ${resp} Label: ${label} Type ${type} Properties ${props}`
 	)
+	this.updateStatus(InstanceStatus.Ok)
 	let workingVar
 	let scripts = []
 	let mvpScripts = []

@@ -53,7 +53,12 @@ export function clearToTxTimeout() {
 }
 
 export function keepAlive() {
-	this.addCmdtoQueue({ proto: proto_version, type: command.list_scripts, label: '', props: [] })
+	if (this.config.model == choices.device[0].id) {
+		this.addCmdtoQueue({ proto: proto_version, type: command.list_scripts, label: '', props: [] })
+	} else {
+		//for any unit other than MVP send msg with invalid protocol version
+		this.addCmdtoQueue({ proto: '99', type: command.list_scripts, label: '', props: [] })
+	}
 }
 
 export function processCmdQueue() {
@@ -75,13 +80,11 @@ export function sendCommand(cmd) {
 			let sequence = this.returnSequence()
 			let msg = STX + cmd.proto + sequence + cmd.type + '(' + cmd.label + ')'
 			let properties = '{'
-			//let props = cmd.props
 			for (let i = 0; i < cmd.props.length; i++) {
 				properties += ` ${cmd.props[i].name} = ${cmd.props[i].value}`
 			}
 			msg += properties + ' }' + ETX
 			//this.log('debug', `Sending Command: ${msg}`)
-			console.log(`Sending Command: ${msg}`)
 			this.clearToTx = false
 			this.socket.send(msg)
 			if (this.mvp.msgStore === undefined) {

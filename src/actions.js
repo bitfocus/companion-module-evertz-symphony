@@ -125,6 +125,34 @@ export default function (self) {
 				})
 			},
 		}
+		actionList['saveDisplay'] = {
+			name: 'Save Display',
+			options: [
+				actionOptions.saveDisplay.script,
+				{
+					...actionOptions.saveDisplay.display,
+					tooltip: `Return an integer between 1 and ${self.config.display}`,
+				},
+				actionOptions.saveDisplay.info,
+			],
+			callback: async (action) => {
+				let script = await self.parseVariablesInString(action.options.script)
+				let display = parseInt(await self.parseVariablesInString(action.options.display))
+				if (isNaN(display) || display < 1 || display > self.config.display) {
+					self.log('warn', `Invalid display selected ${display}`)
+					return undefined
+				}
+				self.addCmdtoQueue({
+					proto: proto_version,
+					type: command.save_display,
+					label: '',
+					props: [
+						{ name: 'display', value: display },
+						{ name: 'script', value: `"${script}"` },
+					],
+				})
+			},
+		}
 	}
 	if (self.config.model == choices.device[1].id || self.config.model == choices.device[2].id) {
 		actionList['runScript'] = {

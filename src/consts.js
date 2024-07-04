@@ -1,4 +1,4 @@
-import { Regex } from '@companion-module/base'
+import { Regex, InstanceStatus } from '@companion-module/base'
 
 export const proto_version = '01'
 export const default_port = 9750
@@ -10,17 +10,17 @@ export const STX = '\x02'
 export const ETX = '\x03'
 
 export const error_codes = {
-	1: { id: '01', label: 'Protocol Version Unsupported' },
-	2: { id: '02', label: 'Command Too Long' },
-	3: { id: '03', label: 'Internal Error' },
-	4: { id: '04', label: 'Syntax Error' },
-	5: { id: '05', label: 'Invalid Command' },
-	6: { id: '06', label: 'Invalid Property' },
-	7: { id: '07', label: 'Duplicate Argument' },
-	8: { id: '08', label: 'Missing Argument' },
-	9: { id: '09', label: 'Property Type Error' },
-	10: { id: '10', label: 'Property Value Too Long' },
-	11: { id: '11', label: 'System Error' },
+	1: { id: '01', label: 'Protocol Version Unsupported', status: InstanceStatus.UnknownError },
+	2: { id: '02', label: 'Command Too Long', status: InstanceStatus.UnknownError },
+	3: { id: '03', label: 'Internal Error', status: InstanceStatus.UnknownError },
+	4: { id: '04', label: 'Syntax Error', status: InstanceStatus.UnknownError },
+	5: { id: '05', label: 'Invalid Command', status: InstanceStatus.UnknownWarning },
+	6: { id: '06', label: 'Invalid Property', status: InstanceStatus.BadConfig },
+	7: { id: '07', label: 'Duplicate Argument', status: InstanceStatus.BadConfig },
+	8: { id: '08', label: 'Missing Argument', status: InstanceStatus.UnknownWarning },
+	9: { id: '09', label: 'Property Type Error', status: InstanceStatus.BadConfig },
+	10: { id: '10', label: 'Property Value Too Long', status: InstanceStatus.BadConfig },
+	11: { id: '11', label: 'System Error', status: InstanceStatus.UnknownError },
 }
 
 export const response = {
@@ -155,6 +155,30 @@ export const actionOptions = {
 			type: 'static-text',
 			label: 'Note',
 			value: 'Requires MVP software 2.13.0 or greater',
+		},
+	},
+	saveDisplay: {
+		script: {
+			id: 'script',
+			type: 'textinput',
+			label: 'Script',
+			useVariables: true,
+			default: 'Script1.vssl',
+			regex: Regex.SOMETHING,
+		},
+		display: {
+			id: 'display',
+			type: 'textinput',
+			label: 'Display',
+			default: '1',
+			useVariables: true,
+			regex: Regex.SOMETHING,
+		},
+		info: {
+			id: 'info',
+			type: 'static-text',
+			label: 'Note',
+			value: 'Requires MVP software 2.17.0 or greater',
 		},
 	},
 	runScriptVIP: {

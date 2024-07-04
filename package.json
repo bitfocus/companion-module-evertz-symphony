@@ -1,6 +1,6 @@
 {
 	"name": "evertz-symphony",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"main": "src/main.js",
 	"scripts": {
 		"format": "prettier -w .",
@@ -9,7 +9,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/phillipivan/companion-module-evertz-mvp.git"
+		"url": "git+https://github.com/bitfocus/companion-module-evertz-symphony.git"
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.8.0"
