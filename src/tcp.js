@@ -116,7 +116,7 @@ export function initTCP() {
 	if (this.config.host) {
 		this.log('debug', 'Creating New Socket')
 
-		this.updateStatus(`Connecting to MVP : ${this.config.host}:${this.config.port}`)
+		this.updateStatus(`Connecting to ${this.config.model}: ${this.config.host}:${this.config.port}`)
 		this.socket = new TCPHelper(this.config.host, this.config.port)
 
 		this.socket.on('status_change', (status, message) => {

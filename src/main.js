@@ -52,6 +52,10 @@ class Evertz_Symphony extends InstanceBase {
 			clearTimeout(this.clearToTxTimer)
 			delete this.clearToTxTimer
 		}
+		if (this.socket) {
+			await this.socket.destroy()
+			delete this.socket
+		}
 		delete this.mvp
 	}
 
