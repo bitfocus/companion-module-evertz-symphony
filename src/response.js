@@ -3,17 +3,17 @@ import { command, response, error_codes, STX, proto_version, choices } from './c
 export function processResponse(msg) {
 	//this.log('debug', `processResponse ${msg}`)
 	if (msg.includes(STX)) {
-		let index = msg.search(STX)
+		const index = msg.search(STX)
 		msg = msg.substring(index + 1)
 	} else {
 		this.log('warn', `STX not found; invalid message recieved: ${msg}`)
 		return undefined
 	}
-	let proto = msg.substring(0, 2)
-	let sequence = msg.substring(2, 6)
-	let resp = msg.substring(6, 8)
-	let label = parseInt(msg.substring(msg.indexOf('(') + 1, msg.indexOf(')')))
-	let props = msg.substring(msg.indexOf(`)`) + 1)
+	const proto = msg.substring(0, 2)
+	const sequence = msg.substring(2, 6)
+	const resp = msg.substring(6, 8)
+	const label = parseInt(msg.substring(msg.indexOf('(') + 1, msg.indexOf(')')))
+	const props = msg.substring(msg.indexOf(`)`) + 1)
 	if (proto !== proto_version) {
 		this.log('warn', `Unsupported Protocol Version. Expected ${proto_version}, Recieved ${proto}`)
 		return undefined
@@ -92,6 +92,7 @@ export function processResponse(msg) {
 			this.log('debug', `Recieved Command type Window Source ${msg}`)
 			break
 		case command.display_listen:
+		case command.display_listen_resp:
 			this.log('debug', `Recieved Command type Display Listen ${msg}`)
 			break
 		case command.save_display:

@@ -41,6 +41,7 @@ export const command = {
 	window_geometry: 'WG', //mvp fw 2.13.0 or greater
 	window_source: 'WS', //mvp fw 2.15.0 or greater
 	display_listen: 'DL', //mvp fw 2.15.0 or greater
+	display_listen_resp: 'DC', //mvp fw 2.15.0 or greater...POSSIBLY A TYPO IN EVERTZ DOCS? Unable to test.
 	save_display: 'SD', //mvp fw 2.17.0 or greater
 	show: 'SHOW', //exhibit
 	hide: 'HIDE', //exhibit
