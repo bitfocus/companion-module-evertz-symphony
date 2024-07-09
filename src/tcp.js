@@ -17,15 +17,6 @@ export function queryOnConnect() {
 	}, msg_delay)
 	if (this.config.model === choices.device[0].id) {
 		this.addCmdtoQueue({ proto: proto_version, type: command.list_scripts, label: '', props: [] })
-		//this.addCmdtoQueue({ type: command.display_listen, label: '', props: [] })
-		for (let i = 1; i <= this.config.display; i++) {
-			this.addCmdtoQueue({
-				proto: proto_version,
-				type: command.list_windows,
-				label: '',
-				props: [{ name: 'display', value: i }],
-			})
-		}
 	} else {
 		this.keepAlive()
 	}
@@ -62,7 +53,7 @@ export function keepAlive() {
 }
 
 export function processCmdQueue() {
-	if (this.cmdQueue.length > 0 && this.clearToTx) {
+	if (this.cmdQueue?.length > 0 && this.clearToTx) {
 		//dont send command if still waiting for response from last command
 		this.sendCommand(this.cmdQueue.shift())
 	}
@@ -126,7 +117,7 @@ export function initTCP() {
 			this.log('error', `Network error: ${err.message}`)
 			this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 			delete this.mvp.msgStore
-			delete this.cmdQueue
+			this.cmdQueue = []
 		})
 		this.socket.on('connect', () => {
 			this.log('info', `Connected to ${this.config.host}:${this.config.port}`)
