@@ -3,6 +3,6 @@ export default function (self) {
 		self.mvp.sequence = 1 // sequence number 0 reserved
 	}
 	let sequence = self.mvp.sequence.toString(36).padStart(4, '0')
-	self.mvp.sequence = self.mvp.sequence >= 1679615 ? 0 : self.mvp.sequence + 1
+	self.mvp.sequence = self.mvp.sequence >= 1679615 ? 1 : self.mvp.sequence + 1
 	return sequence
 }
