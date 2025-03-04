@@ -18,8 +18,8 @@ export default function (self) {
 					tooltip: `Return an integer between 1 and ${self.config.display}`,
 				},
 			],
-			callback: async (action) => {
-				const display = parseInt(await self.parseVariablesInString(action.options.display))
+			callback: async (action, context) => {
+				const display = parseInt(await context.parseVariablesInString(action.options.display))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -29,7 +29,7 @@ export default function (self) {
 					type: command.run_script,
 					label: '',
 					props: [
-						{ name: 'script', value: `"${await self.parseVariablesInString(action.options.script)}"` },
+						{ name: 'script', value: `"${await context.parseVariablesInString(action.options.script)}"` },
 						{ name: 'display', value: display },
 					],
 				})
@@ -46,9 +46,9 @@ export default function (self) {
 				actionOptions.routeAudio.window,
 				actionOptions.routeAudio.pair,
 			],
-			callback: async (action) => {
-				let display = parseInt(await self.parseVariablesInString(action.options.display))
-				const pair = parseInt(await self.parseVariablesInString(action.options.pair))
+			callback: async (action, context) => {
+				let display = parseInt(await context.parseVariablesInString(action.options.display))
+				const pair = parseInt(await context.parseVariablesInString(action.options.pair))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -63,7 +63,7 @@ export default function (self) {
 					type: command.route_audio,
 					label: '',
 					props: [
-						{ name: 'win', value: `"D${display}${await self.parseVariablesInString(action.options.window)}"` },
+						{ name: 'win', value: `"D${display}${await context.parseVariablesInString(action.options.window)}"` },
 						{ name: 'pair', value: pair },
 					],
 				})
@@ -72,8 +72,8 @@ export default function (self) {
 		actionList['setVGPI'] = {
 			name: 'Set VGPI',
 			options: [actionOptions.setVGPI.vgpi, actionOptions.setVGPI.state],
-			callback: async (action) => {
-				const vgpi = parseInt(await self.parseVariablesInString(action.options.vgpi))
+			callback: async (action, context) => {
+				const vgpi = parseInt(await context.parseVariablesInString(action.options.vgpi))
 				if (isNaN(vgpi) || vgpi < 1 || vgpi > 320) {
 					self.log('warn', `Invalid display selected ${vgpi}`)
 					return undefined
@@ -96,8 +96,8 @@ export default function (self) {
 				},
 				actionOptions.unassignWindow.window,
 			],
-			callback: async (action) => {
-				let display = parseInt(await self.parseVariablesInString(action.options.display))
+			callback: async (action, context) => {
+				let display = parseInt(await context.parseVariablesInString(action.options.display))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -107,19 +107,19 @@ export default function (self) {
 					proto: proto_version,
 					type: command.unassign_window_source,
 					label: '',
-					props: [{ name: 'win', value: `"D${display}${await self.parseVariablesInString(action.options.window)}"` }],
+					props: [{ name: 'win', value: `"D${display}${await context.parseVariablesInString(action.options.window)}"` }],
 				})
 			},
 		}
 		actionList['runSnapshot'] = {
 			name: 'Run Snapshot',
 			options: [actionOptions.runSnapshot.snapshot, actionOptions.runSnapshot.info],
-			callback: async (action) => {
+			callback: async (action, context) => {
 				self.addCmdtoQueue({
 					proto: proto_version,
 					type: command.run_snapshot,
 					label: '',
-					props: [{ name: 'snapshot', value: `"${await self.parseVariablesInString(action.options.snapshot)}"` }],
+					props: [{ name: 'snapshot', value: `"${await context.parseVariablesInString(action.options.snapshot)}"` }],
 				})
 			},
 		}
@@ -133,8 +133,8 @@ export default function (self) {
 				},
 				actionOptions.saveDisplay.info,
 			],
-			callback: async (action) => {
-				const display = parseInt(await self.parseVariablesInString(action.options.display))
+			callback: async (action, context) => {
+				const display = parseInt(await context.parseVariablesInString(action.options.display))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -145,7 +145,7 @@ export default function (self) {
 					label: '',
 					props: [
 						{ name: 'display', value: display },
-						{ name: 'script', value: `"${await self.parseVariablesInString(action.options.script)}"` },
+						{ name: 'script', value: `"${await context.parseVariablesInString(action.options.script)}"` },
 					],
 				})
 			},
@@ -155,12 +155,12 @@ export default function (self) {
 		actionList['runScript'] = {
 			name: 'Run Script',
 			options: [actionOptions.runScriptVIP.script],
-			callback: async (action) => {
+			callback: async (action, context) => {
 				self.addCmdtoQueue({
 					proto: proto_version,
 					type: command.run_script,
 					label: '',
-					props: [{ name: 'script', value: `"${await self.parseVariablesInString(action.options.script)}"` }],
+					props: [{ name: 'script', value: `"${await context.parseVariablesInString(action.options.script)}"` }],
 				})
 			},
 		}
@@ -177,8 +177,8 @@ export default function (self) {
 				actionOptions.changeWindowSource.family,
 				actionOptions.changeWindowSource.member,
 			],
-			callback: async (action) => {
-				let display = parseInt(await self.parseVariablesInString(action.options.display))
+			callback: async (action, context) => {
+				let display = parseInt(await context.parseVariablesInString(action.options.display))
 				if (isNaN(display) || display < 1 || display > self.config.display) {
 					self.log('warn', `Invalid display selected ${display}`)
 					return undefined
@@ -189,9 +189,9 @@ export default function (self) {
 					type: command.change_window_source,
 					label: '',
 					props: [
-						{ name: 'win', value: `"D${display}${await self.parseVariablesInString(action.options.window)}"` },
-						{ name: 'family', value: `"${await self.parseVariablesInString(action.options.family)}"` },
-						{ name: 'member', value: `"${await self.parseVariablesInString(action.options.member)}"` },
+						{ name: 'win', value: `"D${display}${await context.parseVariablesInString(action.options.window)}"` },
+						{ name: 'family', value: `"${await context.parseVariablesInString(action.options.family)}"` },
+						{ name: 'member', value: `"${await context.parseVariablesInString(action.options.member)}"` },
 					],
 				})
 			},
@@ -201,23 +201,23 @@ export default function (self) {
 		actionList['show'] = {
 			name: 'Show',
 			options: [actionOptions.show.window],
-			callback: async (action) => {
+			callback: async (action, context) => {
 				self.addCmdtoQueue({
 					type: command.show,
 					label: '',
-					props: [{ name: 'win', value: `"${await self.parseVariablesInString(action.options.window)}"` }],
+					props: [{ name: 'win', value: `"${await context.parseVariablesInString(action.options.window)}"` }],
 				})
 			},
 		}
 		actionList['hide'] = {
 			name: 'Hide',
 			options: [actionOptions.show.window],
-			callback: async (action) => {
+			callback: async (action, context) => {
 				self.addCmdtoQueue({
 					proto: proto_version,
 					type: command.hide,
 					label: '',
-					props: [{ name: 'win', value: `"${await self.parseVariablesInString(action.options.window)}"` }],
+					props: [{ name: 'win', value: `"${await context.parseVariablesInString(action.options.window)}"` }],
 				})
 			},
 		}
@@ -230,19 +230,19 @@ export default function (self) {
 				actionOptions.move.xPos,
 				actionOptions.move.yPos,
 			],
-			callback: async (action) => {
-				const window = await self.parseVariablesInString(action.options.window)
+			callback: async (action, context) => {
+				const window = await context.parseVariablesInString(action.options.window)
 				let duration =
 					action.option.units === choices.duration[1].id
-						? parseInt(await self.parseVariablesInString(action.options.duration))
-						: Number(await self.parseVariablesInString(action.options.duration))
+						? parseInt(await context.parseVariablesInString(action.options.duration))
+						: Number(await context.parseVariablesInString(action.options.duration))
 				if (isNaN(duration) || duration < 0) {
 					self.log('warn', `Invalid Duration ${duration}`)
 					return undefined
 				}
 				duration += action.option.units
-				const xPos = parseInt(await self.parseVariablesInString(action.options.xPos))
-				const yPos = parseInt(await self.parseVariablesInString(action.options.yPos))
+				const xPos = parseInt(await context.parseVariablesInString(action.options.xPos))
+				const yPos = parseInt(await context.parseVariablesInString(action.options.yPos))
 				if (isNaN(xPos) || isNaN(yPos) || xPos < 0 || yPos < 0) {
 					self.log('warn', `Invalid postion ${xPos}:${yPos}`)
 					return undefined
@@ -269,19 +269,19 @@ export default function (self) {
 				actionOptions.scale.xSize,
 				actionOptions.scale.ySize,
 			],
-			callback: async (action) => {
-				const window = await self.parseVariablesInString(action.options.window)
+			callback: async (action, context) => {
+				const window = await context.parseVariablesInString(action.options.window)
 				let duration =
 					action.option.units === choices.duration[1].id
-						? parseInt(await self.parseVariablesInString(action.options.duration))
-						: Number(await self.parseVariablesInString(action.options.duration))
+						? parseInt(await context.parseVariablesInString(action.options.duration))
+						: Number(await context.parseVariablesInString(action.options.duration))
 				if (isNaN(duration) || duration < 0) {
 					self.log('warn', `Invalid Duration ${duration}`)
 					return undefined
 				}
 				duration += action.option.units
-				const xSize = parseInt(await self.parseVariablesInString(action.options.xSize))
-				const ySize = parseInt(await self.parseVariablesInString(action.options.ySize))
+				const xSize = parseInt(await context.parseVariablesInString(action.options.xSize))
+				const ySize = parseInt(await context.parseVariablesInString(action.options.ySize))
 				if (isNaN(xSize) || isNaN(ySize) || xSize < 0 || ySize < 0) {
 					self.log('warn', `Invalid size ${xSize}:${ySize}`)
 					return undefined
