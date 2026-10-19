@@ -1,6 +1,12 @@
 node_modules/
-.yarn/
 package-lock.json
 /pkg
-/pkg.tgz
+/*.tgz
+/dist
+/coverage
 DEBUG-*
+/.yarn
+/.vscode
+*.log
+*.zip
+.DS_Store
