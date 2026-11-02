@@ -4,6 +4,11 @@ See [HELP.md](./companion/HELP.md) and [LICENSE](./LICENSE)
 
 ## Version History
 
+### Version 2.0.1
+
+- Update workflows
+- Updaye .yarnrc.yml
+
 ### Version 2.0.0
 
 - Update to Companion module API 2.2, which needs Companion 5.1 or later
